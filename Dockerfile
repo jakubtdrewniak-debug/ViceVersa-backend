@@ -7,4 +7,4 @@ FROM eclipse-temurin:21-jre-alpine
 WORKDIR /vv
 COPY --from=build /vv/target/*.jar viceVersa.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "viceVersa.jar"]
