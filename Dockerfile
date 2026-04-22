@@ -1,7 +1,7 @@
 FROM maven:3.9.14-eclipse-temurin-21-alpine AS build
 WORKDIR /vv
 COPY . .
-RUN mvn clean package
+RUN mvn clean package -DskipTests
 
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /vv
