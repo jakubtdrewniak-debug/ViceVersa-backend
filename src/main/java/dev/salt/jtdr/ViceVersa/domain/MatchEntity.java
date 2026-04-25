@@ -1,5 +1,6 @@
 package dev.salt.jtdr.ViceVersa.domain;
 
+import dev.salt.jtdr.ViceVersa.enums.EntryType;
 import dev.salt.jtdr.ViceVersa.enums.MatchStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -20,6 +21,9 @@ public class MatchEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tournament_id")
     private TournamentEntity tournament;
+
+    @Enumerated(EnumType.STRING)
+    private EntryType entryType;
 
     private Integer round;
     private LocalDateTime matchDate;
