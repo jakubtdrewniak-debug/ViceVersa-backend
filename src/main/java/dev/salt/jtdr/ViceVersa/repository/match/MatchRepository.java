@@ -26,7 +26,7 @@ public class MatchRepository {
 
 
     public MatchEntity saveMatch(MatchEntity match) {
-        repo.save(match);
+        return repo.save(match);
     }
 
     public List<MatchEntity> findHistory(String playerId) {
