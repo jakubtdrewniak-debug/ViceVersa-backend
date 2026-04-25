@@ -26,6 +26,12 @@ public class TeamService {
                 .orElse(null);
     }
 
+    public List<TeamDto> getAllTeams() {
+        return teamRepo.findAllTeams().stream()
+                .map(this::mapToTeamDto)
+                .toList();
+    }
+
     @Transactional
     public TeamDto createTeam(String teamName, String captainId) {
         UserEntity captain = userRepo.findById(captainId)

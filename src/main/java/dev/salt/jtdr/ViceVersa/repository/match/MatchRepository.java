@@ -4,6 +4,7 @@ import dev.salt.jtdr.ViceVersa.domain.MatchEntity;
 import dev.salt.jtdr.ViceVersa.dto.match.MatchDto;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,5 +40,9 @@ public class MatchRepository {
 
     public void deleteById(String matchId) {
         repo.deleteById(matchId);
+    }
+
+    public List<MatchEntity> findAllMatches() {
+        return repo.findAll();
     }
 }

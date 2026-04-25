@@ -27,6 +27,12 @@ public class MatchService {
                 .orElse(null);
     }
 
+    public List<MatchDto> getAllMatches() {
+        return matchRepo.findAllMatches().stream()
+                .map(mapper::mapToMatchDto)
+                .toList();
+    }
+
     public List<MatchDto> getSoloMatches() {
         return matchRepo.findSoloMatches().stream()
                 .map(mapper::mapToMatchDto)

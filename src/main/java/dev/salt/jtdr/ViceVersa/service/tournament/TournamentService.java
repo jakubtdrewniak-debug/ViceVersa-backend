@@ -46,6 +46,11 @@ public class TournamentService {
         );
     }
 
+    public List<TournamentDto> getAllTournaments() {
+        return tournamentRepo.findAll().stream()
+                .map(this::mapToTournamentDTO)
+                .toList();
+    }
 
     @Transactional
     public TournamentDto createTournament(TournamentCreateDto createData) {
@@ -84,6 +89,21 @@ public class TournamentService {
         }
         tournamentRepo.deleteById(tournamentId);
         return true;
+    }
+
+    private TournamentDto mapToTournamentDTO(TournamentEntity tournament) {
+        List<MatchDto> matchDTOs = tournament.getMatches().stream()
+                .map(mapper::mapToMatchDto)
+                .toList();
+
+        return new TournamentDto(
+                tournament.getId(),
+                tournament.getName(),
+                tournament.getGame(),
+                tournament.getFormat(),
+                tournament.getStatus(),
+                matchDTOs
+        );
     }
 
 }

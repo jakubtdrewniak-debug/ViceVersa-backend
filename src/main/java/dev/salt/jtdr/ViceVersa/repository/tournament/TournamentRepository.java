@@ -3,6 +3,7 @@ package dev.salt.jtdr.ViceVersa.repository.tournament;
 import dev.salt.jtdr.ViceVersa.domain.TournamentEntity;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -32,5 +33,9 @@ public class TournamentRepository {
 
     public TournamentEntity saveTournament(TournamentEntity newTournament) {
         return repo.save(newTournament);
+    }
+
+    public List<TournamentEntity> findAll() {
+        return repo.findAll();
     }
 }
