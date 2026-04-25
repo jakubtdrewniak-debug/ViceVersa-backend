@@ -1,4 +1,4 @@
-package dev.salt.jtdr.ViceVersa.dto;
+package dev.salt.jtdr.ViceVersa.dto.tournament;
 
 import dev.salt.jtdr.ViceVersa.enums.TournamentStatus;
 

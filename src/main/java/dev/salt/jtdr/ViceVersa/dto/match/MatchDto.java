@@ -1,5 +1,6 @@
-package dev.salt.jtdr.ViceVersa.dto;
+package dev.salt.jtdr.ViceVersa.dto.match;
 
+import dev.salt.jtdr.ViceVersa.dto.ParticipantDto;
 import dev.salt.jtdr.ViceVersa.enums.MatchStatus;
 
 import java.time.LocalDateTime;

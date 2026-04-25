@@ -1,4 +1,4 @@
-package dev.salt.jtdr.ViceVersa.user;
+package dev.salt.jtdr.ViceVersa.repository.user;
 
 import dev.salt.jtdr.ViceVersa.domain.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

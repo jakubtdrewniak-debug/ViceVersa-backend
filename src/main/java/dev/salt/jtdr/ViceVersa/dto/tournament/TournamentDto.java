@@ -1,5 +1,6 @@
-package dev.salt.jtdr.ViceVersa.dto;
+package dev.salt.jtdr.ViceVersa.dto.tournament;
 
+import dev.salt.jtdr.ViceVersa.dto.match.MatchDto;
 import dev.salt.jtdr.ViceVersa.enums.EntryType;
 import dev.salt.jtdr.ViceVersa.enums.TournamentStatus;
 

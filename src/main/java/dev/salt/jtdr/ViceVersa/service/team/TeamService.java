@@ -1,12 +1,12 @@
-package dev.salt.jtdr.ViceVersa.service;
+package dev.salt.jtdr.ViceVersa.service.team;
 
 import dev.salt.jtdr.ViceVersa.domain.TeamEntity;
 import dev.salt.jtdr.ViceVersa.domain.UserEntity;
-import dev.salt.jtdr.ViceVersa.dto.TeamDto;
-import dev.salt.jtdr.ViceVersa.dto.TeamUpdateDto;
+import dev.salt.jtdr.ViceVersa.dto.team.TeamDto;
+import dev.salt.jtdr.ViceVersa.dto.team.TeamUpdateDto;
 import dev.salt.jtdr.ViceVersa.dto.UserDto;
-import dev.salt.jtdr.ViceVersa.team.TeamRepository;
-import dev.salt.jtdr.ViceVersa.user.UserRepository;
+import dev.salt.jtdr.ViceVersa.repository.team.TeamRepository;
+import dev.salt.jtdr.ViceVersa.repository.user.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

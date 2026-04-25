@@ -1,18 +1,17 @@
-package dev.salt.jtdr.ViceVersa.user;
+package dev.salt.jtdr.ViceVersa.repository.user;
 
 import dev.salt.jtdr.ViceVersa.domain.UserEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
+@RequiredArgsConstructor
 public class UserRepository {
 
     private final JpaUserRepository repo;
 
-    public UserRepository(JpaUserRepository repo) {
-        this.repo = repo;
-    }
 
     public Optional<UserEntity> findById(String id) {
         return repo.findById(id);

@@ -1,13 +1,14 @@
-package dev.salt.jtdr.ViceVersa.service;
+package dev.salt.jtdr.ViceVersa.service.tournament;
 
-import dev.salt.jtdr.ViceVersa.domain.MatchEntity;
 import dev.salt.jtdr.ViceVersa.domain.TournamentEntity;
 import dev.salt.jtdr.ViceVersa.dto.*;
-import dev.salt.jtdr.ViceVersa.enums.EntryType;
+import dev.salt.jtdr.ViceVersa.dto.match.MatchDto;
+import dev.salt.jtdr.ViceVersa.dto.tournament.TournamentCreateDto;
+import dev.salt.jtdr.ViceVersa.dto.tournament.TournamentDto;
+import dev.salt.jtdr.ViceVersa.dto.tournament.TournamentUpdateDto;
 import dev.salt.jtdr.ViceVersa.enums.TournamentStatus;
-import dev.salt.jtdr.ViceVersa.team.TeamRepository;
-import dev.salt.jtdr.ViceVersa.tournament.TournamentRepository;
-import dev.salt.jtdr.ViceVersa.user.UserRepository;
+import dev.salt.jtdr.ViceVersa.repository.tournament.TournamentRepository;
+import dev.salt.jtdr.ViceVersa.service.helper.MatchMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,8 +21,7 @@ import java.util.Optional;
 public class TournamentService {
 
     private final TournamentRepository tournamentRepo;
-    private final UserRepository userRepo;
-    private final TeamRepository teamRepo;
+    private final MatchMapper mapper;
 
     public TournamentDto getTournamentDetails(String tournamentId) {
 
@@ -33,7 +33,7 @@ public class TournamentService {
         TournamentEntity tournament = tournamentOptional.get();
 
         List<MatchDto> matches = tournament.getMatches().stream()
-                .map(this::mapToMatchDto)
+                .map(mapper::mapToMatchDto)
                 .toList();
 
         return new TournamentDto(
@@ -86,35 +86,4 @@ public class TournamentService {
         return true;
     }
 
-    private MatchDto mapToMatchDto(MatchEntity match) {
-        ParticipantDto p1 = resolveParticipant(match.getPlayer1Id(), match.getEntryType());
-        ParticipantDto p2 = resolveParticipant(match.getPlayer2Id(), match.getEntryType());
-        ParticipantDto winner = resolveParticipant(match.getWinnerId(), match.getEntryType());
-
-        return new MatchDto(
-                match.getId(),
-                match.getTournament() != null ? match.getTournament().getId() : null,
-                match.getRound(),
-                match.getMatchDate(),
-                match.getStatus(),
-                p1,
-                p2,
-                winner,
-                new MatchScoreDto(match.getScoreP1(), match.getScoreP2())
-        );
-    }
-
-    private ParticipantDto resolveParticipant(String id, EntryType type) {
-        if (id == null) return null;
-
-        if (type == EntryType.SOLO) {
-            return userRepo.findById(id)
-                    .map(user -> new ParticipantDto(user.getId(), user.getName(), user.getAvatar(), false))
-                    .orElse(new ParticipantDto(id, "Unknown Player", null, false));
-        } else {
-            return teamRepo.findById(id)
-                    .map(team -> new ParticipantDto(team.getId(), team.getName(), team.getAvatar(), true))
-                    .orElse(new ParticipantDto(id, "Unknown Team", null, true));
-        }
-    }
 }

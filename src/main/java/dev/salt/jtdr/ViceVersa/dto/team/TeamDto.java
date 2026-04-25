@@ -1,4 +1,6 @@
-package dev.salt.jtdr.ViceVersa.dto;
+package dev.salt.jtdr.ViceVersa.dto.team;
+
+import dev.salt.jtdr.ViceVersa.dto.UserDto;
 
 import java.util.List;
 

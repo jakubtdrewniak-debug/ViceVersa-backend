@@ -1,4 +1,4 @@
-package dev.salt.jtdr.ViceVersa.team;
+package dev.salt.jtdr.ViceVersa.repository.team;
 
 import dev.salt.jtdr.ViceVersa.domain.TeamEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

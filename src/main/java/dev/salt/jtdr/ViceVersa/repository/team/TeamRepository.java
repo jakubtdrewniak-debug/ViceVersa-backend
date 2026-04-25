@@ -1,6 +1,8 @@
-package dev.salt.jtdr.ViceVersa.team;
+package dev.salt.jtdr.ViceVersa.repository.team;
 
 import dev.salt.jtdr.ViceVersa.domain.TeamEntity;
+import dev.salt.jtdr.ViceVersa.domain.UserEntity;
+import dev.salt.jtdr.ViceVersa.repository.user.JpaUserRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -29,4 +31,5 @@ public class TeamRepository {
     public void saveTeam(TeamEntity team) {
         repo.save(team);
     }
+
 }
