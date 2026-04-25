@@ -17,4 +17,16 @@ public class TeamRepository {
     public Optional<TeamEntity> findById(String id) {
         return repo.findById(id);
     }
+
+    public TeamEntity createTeam(TeamEntity newTeam) {
+        return repo.save(newTeam);
+    }
+
+    public void deleteTeam(String teamId) {
+        repo.deleteById(teamId);
+    }
+
+    public void saveTeam(TeamEntity team) {
+        repo.save(team);
+    }
 }
