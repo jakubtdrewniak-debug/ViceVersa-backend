@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +20,7 @@ public class MatchEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tournament_id")
     private TournamentEntity tournament;

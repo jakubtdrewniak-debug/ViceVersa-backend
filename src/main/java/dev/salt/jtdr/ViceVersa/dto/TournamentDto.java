@@ -4,7 +4,6 @@ import dev.salt.jtdr.ViceVersa.enums.EntryType;
 import dev.salt.jtdr.ViceVersa.enums.TournamentStatus;
 
 import java.util.List;
-import java.util.Map;
 
 public record TournamentDto(
         String id,

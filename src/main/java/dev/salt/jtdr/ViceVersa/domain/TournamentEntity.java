@@ -1,5 +1,6 @@
 package dev.salt.jtdr.ViceVersa.domain;
 
+import dev.salt.jtdr.ViceVersa.enums.EntryType;
 import dev.salt.jtdr.ViceVersa.enums.TournamentStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -26,7 +27,7 @@ public class TournamentEntity {
     private TournamentStatus status = TournamentStatus.UPCOMING;
 
     @Enumerated(EnumType.STRING)
-    private EnumType entryType;
+    private EntryType entryType;
 
     @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MatchEntity> matches = new ArrayList<>();
