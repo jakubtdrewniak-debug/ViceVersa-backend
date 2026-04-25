@@ -29,4 +29,8 @@ public class TournamentRepository {
     public void deleteById(String tournamentId) {
         repo.deleteById(tournamentId);
     }
+
+    public TournamentEntity saveTournament(TournamentEntity newTournament) {
+        return repo.save(newTournament);
+    }
 }

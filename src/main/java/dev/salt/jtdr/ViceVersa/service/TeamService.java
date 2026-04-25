@@ -119,6 +119,25 @@ public class TeamService {
         return mapToTeamDto(team);
     }
 
+    @Transactional
+    public TeamDto transferCaptaincy(String teamId, String requestId, String newCaptainId) {
+
+        UserEntity oldCaptain = userRepo.findById(requestId).orElseThrow();
+        TeamEntity team = teamRepo.findById(teamId).orElseThrow();
+
+        if (!team.getCaptain().getId().equals(requestId)) {
+            throw new SecurityException("Only the captain can pass on the mantle");
+        }
+        UserEntity newCaptain = userRepo.findById(newCaptainId).orElseThrow();
+
+        boolean isOnRoster = team.getMembers().stream().anyMatch(m -> m.getId().equals(newCaptainId));
+        if (!isOnRoster) throw new IllegalArgumentException("New captain must be on the team.");
+
+        team.setCaptain(newCaptain);
+        teamRepo.saveTeam(team);
+        return mapToTeamDto(team);
+    }
+
     private TeamDto mapToTeamDto(TeamEntity team) {
         UserDto captain = mapToUserDto(team.getCaptain());
 

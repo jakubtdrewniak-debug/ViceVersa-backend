@@ -4,6 +4,7 @@ import dev.salt.jtdr.ViceVersa.domain.MatchEntity;
 import dev.salt.jtdr.ViceVersa.domain.TournamentEntity;
 import dev.salt.jtdr.ViceVersa.dto.*;
 import dev.salt.jtdr.ViceVersa.enums.EntryType;
+import dev.salt.jtdr.ViceVersa.enums.TournamentStatus;
 import dev.salt.jtdr.ViceVersa.team.TeamRepository;
 import dev.salt.jtdr.ViceVersa.tournament.TournamentRepository;
 import dev.salt.jtdr.ViceVersa.user.UserRepository;
@@ -43,6 +44,21 @@ public class TournamentService {
                 tournament.getStatus(),
                 matches
         );
+    }
+
+
+    @Transactional
+    public TournamentDto createTournament(TournamentCreateDto createData) {
+        TournamentEntity newTournament = new TournamentEntity();
+
+        newTournament.setName(createData.name());
+        newTournament.setGame(createData.game());
+        newTournament.setEntryType(createData.type());;
+        newTournament.setStatus(TournamentStatus.UPCOMING);
+
+        TournamentEntity savedTournament = tournamentRepo.saveTournament(newTournament);
+
+        return getTournamentDetails(savedTournament.getId());
     }
 
     @Transactional
