@@ -1,10 +1,8 @@
 package dev.salt.jtdr.ViceVersa.repository.match;
 
 import dev.salt.jtdr.ViceVersa.domain.MatchEntity;
-import dev.salt.jtdr.ViceVersa.dto.match.MatchDto;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,5 +42,17 @@ public class MatchRepository {
 
     public List<MatchEntity> findAllMatches() {
         return repo.findAll();
+    }
+
+    public List<MatchEntity> saveAll(List<MatchEntity> generatedMatches) {
+        return repo.saveAll(generatedMatches);
+    }
+
+    public void save(MatchEntity nextMatch) {
+        repo.save(nextMatch);
+    }
+
+    public List<MatchEntity> findRoundMatches(String tournamentId, int currentRound) {
+        return repo.findByTournamentIdAndRoundOrderByIdAsc(tournamentId, currentRound);
     }
 }

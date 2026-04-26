@@ -9,4 +9,6 @@ public interface JpaMatchRepository extends JpaRepository<MatchEntity, String> {
     List<MatchEntity> findByTournamentIsNull();
 
     List<MatchEntity> findAllByPlayer1IdOrPlayer2Id(String playerId, String player2d);
+
+    List<MatchEntity> findByTournamentIdAndRoundOrderByIdAsc(String tournamentId, int currentRound);
 }
