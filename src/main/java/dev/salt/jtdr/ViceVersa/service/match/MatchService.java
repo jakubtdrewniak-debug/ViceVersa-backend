@@ -5,6 +5,7 @@ import dev.salt.jtdr.ViceVersa.dto.match.MatchDto;
 import dev.salt.jtdr.ViceVersa.enums.EntryType;
 import dev.salt.jtdr.ViceVersa.enums.MatchStatus;
 import dev.salt.jtdr.ViceVersa.repository.match.MatchRepository;
+import dev.salt.jtdr.ViceVersa.service.TournamentProgressionService;
 import dev.salt.jtdr.ViceVersa.service.helper.MatchMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ import java.util.List;
 public class MatchService {
 
     private final MatchRepository matchRepo;
-
+    private final TournamentProgressionService progressionService;
     private final MatchMapper mapper;
 
     public MatchDto getMatchById(String matchId) {
@@ -76,6 +77,8 @@ public class MatchService {
         }
 
         matchRepo.saveMatch(match);
+
+        progressionService.advanceWinner(match);
         return mapper.mapToMatchDto(match);
     }
 
