@@ -100,7 +100,7 @@ public class TournamentService {
                 tournament.getId(),
                 tournament.getName(),
                 tournament.getGame(),
-                tournament.getFormat(),
+                tournament.getEntryType(),
                 tournament.getStatus(),
                 matchDTOs
         );
