@@ -21,4 +21,8 @@ public class UserRepository {
     public List<UserEntity> findAll() {
         return repo.findAll();
     }
+
+    public UserEntity saveUser(UserEntity newUser) {
+        return repo.save(newUser);
+    }
 }
