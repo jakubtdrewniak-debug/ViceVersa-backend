@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -47,7 +48,10 @@ public class MatchService {
     }
 
     @Transactional
-    public MatchDto createExhibitionMatch(EntryType type, String player1Id, String player2Id) {
+    public MatchDto createExhibitionMatch(String requestId, EntryType type, String player1Id, String player2Id) {
+        if (!requestId.equals(player1Id) && !requestId.equals(player2Id)) {
+            throw new SecurityException("You can create an exhibition match only if you participate in it.");
+        }
         MatchEntity match = new MatchEntity();
         match.setEntryType(type);
         match.setPlayer1Id(player1Id);
@@ -60,9 +64,20 @@ public class MatchService {
     }
 
     @Transactional
-    public MatchDto updateMatchScore(String matchId, Integer scoreP1, Integer scoreP2) {
-        MatchEntity match = matchRepo.findMatch(matchId).orElse(null);
-        if (match == null) return null;
+    public MatchDto updateMatchScore(String matchId, String requestId, Integer scoreP1, Integer scoreP2, boolean isAdmin) {
+        MatchEntity match = matchRepo.findMatch(matchId)
+                .orElseThrow(() -> new NoSuchElementException("Match not found"));
+
+        boolean isPlayer1 = requestId.equals(match.getPlayer1Id());
+        boolean isPlayer2 = requestId.equals(match.getPlayer2Id());
+
+        if (!isAdmin || !isPlayer1 || !isPlayer2) {
+            throw new SecurityException("Only match participants and admins can report match scores.");
+        }
+
+        if (scoreP1 < 0 || scoreP2 < 0) {
+            throw new IllegalArgumentException("Scores cannot be negative");
+        }
 
         match.setScoreP1(scoreP1);
         match.setScoreP2(scoreP2);
@@ -83,7 +98,11 @@ public class MatchService {
     }
 
     @Transactional
-    public boolean deleteMatch(String matchId) {
+    public boolean deleteMatch(String matchId, boolean isAdmin) {
+        if (!isAdmin) {
+            throw new SecurityException("Only administrators can delete match records.");
+        }
+
         if (!matchRepo.exists(matchId)) {
             return false;
         }
