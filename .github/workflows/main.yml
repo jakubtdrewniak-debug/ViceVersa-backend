@@ -53,3 +53,5 @@ jobs:
             DB_URL = ${{ secrets.DB_URL}}
             DB_USER = ${{ secrets.DB_USER}}
             DB_PASS = ${{ secrets.DB_PASS}}
+            AUTH0_ISSUER = ${{ vars.AUTH0_ISSUER }}
+            AUTH0_AUDIENCE = ${{ vars.AUTH0_AUDIENCE }}
