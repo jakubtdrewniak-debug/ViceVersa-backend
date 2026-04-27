@@ -8,6 +8,7 @@ import dev.salt.jtdr.ViceVersa.dto.tournament.TournamentDto;
 import dev.salt.jtdr.ViceVersa.dto.tournament.TournamentUpdateDto;
 import dev.salt.jtdr.ViceVersa.enums.TournamentStatus;
 import dev.salt.jtdr.ViceVersa.repository.tournament.TournamentRepository;
+import dev.salt.jtdr.ViceVersa.service.BracketEngineService;
 import dev.salt.jtdr.ViceVersa.service.helper.MatchMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.Optional;
 public class TournamentService {
 
     private final TournamentRepository tournamentRepo;
+    private final BracketEngineService bracket;
     private final MatchMapper mapper;
 
     public TournamentDto getTournamentDetails(String tournamentId) {
@@ -64,6 +66,23 @@ public class TournamentService {
         TournamentEntity savedTournament = tournamentRepo.saveTournament(newTournament);
 
         return getTournamentDetails(savedTournament.getId());
+    }
+
+
+    @Transactional
+    public TournamentDto startTournament(String tournamentId, List<String> participantIds) {
+        TournamentEntity tournament = tournamentRepo.findById(tournamentId).orElse(null);
+        if (tournament == null) return null;
+
+        if (tournament.getStatus() != TournamentStatus.LIVE) {
+            throw new IllegalStateException("Tournament has already been started.");
+        }
+
+        bracket.generateBracket(tournament, participantIds);
+
+        tournamentRepo.saveTournament(tournament);
+
+        return getTournamentDetails(tournamentId);
     }
 
     @Transactional
