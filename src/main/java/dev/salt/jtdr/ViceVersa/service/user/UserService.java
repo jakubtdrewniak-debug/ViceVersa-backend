@@ -20,6 +20,13 @@ public class UserService {
                 .toList();
     }
 
+    public List<UserDto> searchUsers(String query) {
+        return repo.findAll().stream()
+                .filter(user -> user.getName().toLowerCase().contains(query.toLowerCase()))
+                .map(this::mapToUserDto)
+                .toList();
+    }
+
     private UserDto mapToUserDto(UserEntity user) {
         return new UserDto(
                 user.getId(),
