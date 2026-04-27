@@ -49,12 +49,12 @@ public class TeamService {
     }
 
     @Transactional
-    public boolean deleteTeam(String teamId, String requesterId) {
+    public boolean deleteTeam(String teamId, String requesterId, boolean isAdmin) {
         TeamEntity team = teamRepo.findById(teamId).orElse(null);
 
         if (team == null) return false;
 
-        if (!team.getCaptain().getId().equals(requesterId)) {
+        if (!team.getCaptain().getId().equals(requesterId) | !isAdmin) {
             throw new SecurityException("Only the captain can delete this team.");
         }
 
