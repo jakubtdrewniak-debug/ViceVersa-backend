@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public class TeamRepository {
@@ -36,5 +37,9 @@ public class TeamRepository {
 
     public List<TeamEntity> findAllTeams() {
         return repo.findAll();
+    }
+
+    public List<TeamEntity> findAllId(Set<String> ids) {
+        return repo.findAllById(ids);
     }
 }

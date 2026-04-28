@@ -55,4 +55,9 @@ public class MatchRepository {
     public List<MatchEntity> findRoundMatches(String tournamentId, int currentRound) {
         return repo.findByTournamentIdAndRoundOrderByIdAsc(tournamentId, currentRound);
     }
+
+    public List<MatchEntity> findMatchesInTournament(String tournamentId) {
+        return repo.findByTournamentId(tournamentId);
+
+    }
 }

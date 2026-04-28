@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
@@ -24,5 +25,9 @@ public class UserRepository {
 
     public UserEntity saveUser(UserEntity newUser) {
         return repo.save(newUser);
+    }
+
+    public List<UserEntity> findAllId(Set<String> ids) {
+        return repo.findAllById(ids);
     }
 }

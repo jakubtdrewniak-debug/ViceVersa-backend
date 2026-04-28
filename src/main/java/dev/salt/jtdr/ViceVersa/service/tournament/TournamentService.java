@@ -1,21 +1,28 @@
 package dev.salt.jtdr.ViceVersa.service.tournament;
 
+import dev.salt.jtdr.ViceVersa.domain.MatchEntity;
+import dev.salt.jtdr.ViceVersa.domain.TeamEntity;
 import dev.salt.jtdr.ViceVersa.domain.TournamentEntity;
+import dev.salt.jtdr.ViceVersa.domain.UserEntity;
 import dev.salt.jtdr.ViceVersa.dto.*;
 import dev.salt.jtdr.ViceVersa.dto.match.MatchDto;
 import dev.salt.jtdr.ViceVersa.dto.tournament.TournamentCreateDto;
 import dev.salt.jtdr.ViceVersa.dto.tournament.TournamentDto;
 import dev.salt.jtdr.ViceVersa.dto.tournament.TournamentUpdateDto;
+import dev.salt.jtdr.ViceVersa.enums.EntryType;
 import dev.salt.jtdr.ViceVersa.enums.TournamentStatus;
+import dev.salt.jtdr.ViceVersa.repository.match.MatchRepository;
+import dev.salt.jtdr.ViceVersa.repository.team.TeamRepository;
 import dev.salt.jtdr.ViceVersa.repository.tournament.TournamentRepository;
+import dev.salt.jtdr.ViceVersa.repository.user.UserRepository;
 import dev.salt.jtdr.ViceVersa.service.BracketEngineService;
 import dev.salt.jtdr.ViceVersa.service.helper.MatchMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +30,10 @@ public class TournamentService {
 
     private final TournamentRepository tournamentRepo;
     private final BracketEngineService bracket;
+    private final MatchRepository matchRepo;
     private final MatchMapper mapper;
+    private final UserRepository userRepository;
+    private final TeamRepository teamRepository;
 
     public TournamentDto getTournamentDetails(String tournamentId) {
 
@@ -52,6 +62,41 @@ public class TournamentService {
         return tournamentRepo.findAll().stream()
                 .map(this::mapToTournamentDTO)
                 .toList();
+    }
+
+    public List<ParticipantDto> getTournamentParticipants(String tournamentId) {
+        TournamentEntity tournament = tournamentRepo.findById(tournamentId)
+                .orElse(null);
+
+        List<MatchEntity> matches = matchRepo.findMatchesInTournament(tournamentId);
+
+        Set<String> uniqueIds = new HashSet<>();
+        for (MatchEntity match : matches) {
+            if (match.getPlayer1Id() != null) uniqueIds.add(match.getPlayer1Id());
+            if (match.getPlayer2Id() != null) uniqueIds.add(match.getPlayer2Id());
+        }
+
+        if (EntryType.SOLO == tournament.getEntryType()) {
+
+            List<UserEntity> users = userRepository.findAllId(uniqueIds);
+            return users.stream()
+                    .map(user -> new ParticipantDto(
+                            user.getId(),
+                            user.getName(),
+                            user.getAvatar(),
+                            false
+                    )).collect(Collectors.toList());
+        } else {
+            List<TeamEntity> teams = teamRepository.findAllId(uniqueIds);
+            return teams.stream()
+                    .map(team -> new ParticipantDto(
+                            team.getId(),
+                            team.getName(),
+                            team.getAvatar(),
+                            true
+                    ))
+                    .collect(Collectors.toList());
+        }
     }
 
     @Transactional

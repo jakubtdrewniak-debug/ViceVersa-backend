@@ -1,5 +1,6 @@
 package dev.salt.jtdr.ViceVersa.controller;
 
+import dev.salt.jtdr.ViceVersa.dto.ParticipantDto;
 import dev.salt.jtdr.ViceVersa.dto.tournament.TournamentCreateDto;
 import dev.salt.jtdr.ViceVersa.dto.tournament.TournamentDto;
 import dev.salt.jtdr.ViceVersa.dto.tournament.TournamentUpdateDto;
@@ -38,6 +39,13 @@ public class TournamentController {
 
         TournamentDto newTournament = tournamentService.createTournament(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(newTournament);
+    }
+
+    @GetMapping("/{tournamentId}/participants")
+    public ResponseEntity<List<ParticipantDto>> getTournamentParticipants(@PathVariable String tournamentId) {
+        List<ParticipantDto> participants = tournamentService.getTournamentParticipants(tournamentId);
+
+        return ResponseEntity.ok(participants);
     }
 
     @PutMapping("/{id}")
