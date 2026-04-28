@@ -54,6 +54,7 @@ public class TournamentService {
                 tournament.getGame(),
                 tournament.getEntryType(),
                 tournament.getStatus(),
+                tournament.getWinnerId(),
                 matches
         );
     }
@@ -116,12 +117,14 @@ public class TournamentService {
 
     @Transactional
     public TournamentDto startTournament(String tournamentId, List<String> participantIds) {
-        TournamentEntity tournament = tournamentRepo.findById(tournamentId).orElse(null);
-        if (tournament == null) return null;
+        TournamentEntity tournament = tournamentRepo.findById(tournamentId)
+                .orElseThrow(() -> new RuntimeException("Tournament not found."));
 
-        if (tournament.getStatus() != TournamentStatus.LIVE) {
+        if (tournament.getStatus() != TournamentStatus.UPCOMING) {
             throw new IllegalStateException("Tournament has already been started.");
         }
+
+        tournament.setStatus(TournamentStatus.LIVE);
 
         bracket.generateBracket(tournament, participantIds);
 
@@ -166,6 +169,7 @@ public class TournamentService {
                 tournament.getGame(),
                 tournament.getEntryType(),
                 tournament.getStatus(),
+                tournament.getWinnerId(),
                 matchDTOs
         );
     }

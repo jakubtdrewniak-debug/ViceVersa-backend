@@ -29,6 +29,9 @@ public class TournamentEntity {
     @Enumerated(EnumType.STRING)
     private EntryType entryType;
 
+    @Column(name = "winner_id")
+    private String winnerId;
+
     @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MatchEntity> matches = new ArrayList<>();
 

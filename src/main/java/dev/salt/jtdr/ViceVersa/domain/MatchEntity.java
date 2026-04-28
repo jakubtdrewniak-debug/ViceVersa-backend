@@ -48,4 +48,10 @@ public class MatchEntity {
 
     @Column(name = "score_p2")
     private Integer scoreP2 = 0;
+
+    @Column(name = "is_player1_slot")
+    private boolean isPlayer1Slot;
+
+    @Column(name = "next_match_id")
+    private String nextMatchId;
 }

@@ -12,6 +12,7 @@ public record TournamentDto(
         String game,
         EntryType type,
         TournamentStatus status,
+        String winnerId,
         List<MatchDto> matches
 ) {
 }

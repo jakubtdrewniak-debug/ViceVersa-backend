@@ -4,14 +4,14 @@ import dev.salt.jtdr.ViceVersa.domain.MatchEntity;
 import dev.salt.jtdr.ViceVersa.domain.TournamentEntity;
 import dev.salt.jtdr.ViceVersa.enums.MatchStatus;
 import dev.salt.jtdr.ViceVersa.repository.match.MatchRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.config.YamlProcessor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -19,59 +19,84 @@ public class BracketEngineService {
 
     private final MatchRepository repo;
 
-    public List<MatchEntity> generateBracket(TournamentEntity tournament, List<String> participantIds) {
-
+    @Transactional
+    public void generateBracket(TournamentEntity tournament, List<String> participantIds) {
         List<String> shuffledIds = new ArrayList<>(participantIds);
         Collections.shuffle(shuffledIds);
 
         int p = participantIds.size();
         int n = calculateNextPowerOfTwo(p);
-        int byes = n - p;
-        int totalRound1Matches = n / 2;
+        int totalMatches = n - 1;
 
-        List<MatchEntity> generatedMatches = new ArrayList<>();
+        Queue<MatchEntity> queue = new LinkedList<>();
+
+        MatchEntity finalMatch = createEmptyMatch(tournament, 1, null, false);
+        queue.add(finalMatch);
+
+        List<MatchEntity> allMatches = new ArrayList<>();
+        allMatches.add(finalMatch);
+
+        while (allMatches.size() < totalMatches) {
+            MatchEntity parent = queue.poll();
+            for (int i = 0; i < 2; i++) {
+                MatchEntity child = createEmptyMatch(tournament, parent.getRound() + 1, parent.getId(), i == 0);
+                queue.add(child);
+                allMatches.add(child);
+            }
+        }
+
+        List<MatchEntity> leafMatches = allMatches.stream()
+                .filter(m -> allMatches.stream().noneMatch(c -> m.getId().equals(c.getNextMatchId())))
+                .sorted(Comparator.comparing(MatchEntity::getId))
+                .toList();
+
         int participantIndex = 0;
+        int byes = n - p;
 
-        for (int i = 0; i < totalRound1Matches; i++) {
-            MatchEntity match = new MatchEntity();
-            match.setTournament(tournament);
-            match.setEntryType(tournament.getEntryType());
-            match.setRound(1);
-            match.setMatchDate(LocalDateTime.now());
-
-            match.setPlayer1Id(shuffledIds.get(participantIndex++));
-
+        for (MatchEntity leaf : leafMatches) {
+            leaf.setPlayer1Id(shuffledIds.get(participantIndex++));
             if (byes > 0) {
-                match.setPlayer2Id(null);
-                match.setWinnerId(match.getPlayer1Id());
-                match.setStatus(MatchStatus.COMPLETED);
-                byes --;
+                leaf.setWinnerId(leaf.getPlayer1Id());
+                leaf.setStatus(MatchStatus.COMPLETED);
+                advanceWinner(leaf.getWinnerId(), leaf.getNextMatchId(), leaf.isPlayer1Slot());
+                byes--;
             } else {
-                match.setPlayer2Id(shuffledIds.get(participantIndex++));
-                match.setStatus(MatchStatus.PENDING);
+                leaf.setPlayer2Id(shuffledIds.get(participantIndex++));
             }
-            generatedMatches.add(match);
+            repo.saveMatch(leaf);
         }
+    }
 
-        int currentRoundMathces = totalRound1Matches;
-        int roundNumber = 2;
+    public void advanceWinner(String winnerId, String nextMatchId, boolean isPlayer1Slot) {
+        if (nextMatchId == null) return;
 
-        while (currentRoundMathces > 1) {
-            currentRoundMathces /= 2;
-            for (int i = 0; i < currentRoundMathces; i++) {
-                MatchEntity futureMatch = new MatchEntity();
-                futureMatch.setTournament(tournament);
-                futureMatch.setEntryType(tournament.getEntryType());
-                futureMatch.setRound(roundNumber);
-                futureMatch.setStatus(MatchStatus.PENDING);
-                futureMatch.setPlayer1Id(null);
-                futureMatch.setPlayer2Id(null);
+        MatchEntity nextMatch = repo.findMatch(nextMatchId)
+                .orElseThrow(() -> new RuntimeException("Next match not found"));
 
-                generatedMatches.add(futureMatch);
-            }
-            roundNumber++;
+        if (isPlayer1Slot) {
+            nextMatch.setPlayer1Id(winnerId);
+        } else {
+            nextMatch.setPlayer2Id(winnerId);
         }
-        return repo.saveAll(generatedMatches);
+        repo.saveMatch(nextMatch);
+    }
+
+    private MatchEntity createEmptyMatch(TournamentEntity tournament, int round, String nextMatchId, boolean isPlayer1Slot) {
+        MatchEntity match = new MatchEntity();
+
+
+        match.setTournament(tournament);
+        match.setEntryType(tournament.getEntryType());
+
+
+        match.setRound(round);
+        match.setNextMatchId(nextMatchId);
+        match.setPlayer1Slot(isPlayer1Slot);
+
+        match.setStatus(MatchStatus.PENDING);
+        match.setMatchDate(LocalDateTime.now());
+
+        return repo.saveMatch(match);
     }
 
     private int calculateNextPowerOfTwo(int p) {
