@@ -14,6 +14,8 @@ public record MatchDto(
         ParticipantDto player1,
         ParticipantDto player2,
         ParticipantDto winner,
-        MatchScoreDto score
+        MatchScoreDto score,
+        boolean player1Slot,
+        String nextMatchId
 ) {
 }

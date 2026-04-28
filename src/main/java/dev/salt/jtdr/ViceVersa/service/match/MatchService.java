@@ -71,7 +71,7 @@ public class MatchService {
         boolean isPlayer1 = requestId.equals(match.getPlayer1Id());
         boolean isPlayer2 = requestId.equals(match.getPlayer2Id());
 
-        if (!isAdmin || !isPlayer1 || !isPlayer2) {
+        if (!isAdmin && !isPlayer1 && !isPlayer2) {
             throw new SecurityException("Only match participants and admins can report match scores.");
         }
 
@@ -96,6 +96,7 @@ public class MatchService {
         progressionService.advanceWinner(match);
         return mapper.mapToMatchDto(match);
     }
+
 
     @Transactional
     public boolean deleteMatch(String matchId, boolean isAdmin) {

@@ -33,7 +33,9 @@ public class MatchMapper {
                 p1,
                 p2,
                 winner,
-                new MatchScoreDto(match.getScoreP1(), match.getScoreP2())
+                new MatchScoreDto(match.getScoreP1(), match.getScoreP2()),
+                match.isPlayer1Slot(),
+                match.getNextMatchId()
         );
     }
 
