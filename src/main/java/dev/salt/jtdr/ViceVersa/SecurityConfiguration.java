@@ -29,6 +29,7 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/tournaments", "/api/tournaments/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/teams", "/api/teams/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/matches", "/api/matches/**").permitAll()
@@ -37,6 +38,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/api/**").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/**").authenticated()
+                        .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth -> oauth.jwt(
                         jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())
@@ -44,6 +46,7 @@ public class SecurityConfiguration {
         return http.build();
     }
 
+    @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         grantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
