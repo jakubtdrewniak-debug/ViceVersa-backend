@@ -4,6 +4,10 @@ spring:
     username: ${DB_USER}
     password: ${DB_PASS}
     driver-class-name: org.postgresql.Driver
+    hikari:
+      max-lifetime: 60000
+      keepalive-time: 30000
+      connection-test-query: SELECT 1
   application:
     name: ViceVersa
   jpa:
