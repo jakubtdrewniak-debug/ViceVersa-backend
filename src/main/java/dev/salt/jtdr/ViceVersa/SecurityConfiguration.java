@@ -29,10 +29,10 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, "/api/tournaments/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/teams/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/matches/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/users/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/tournaments", "/api/tournaments/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/teams", "/api/teams/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/matches", "/api/matches/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/users", "/api/users/**").permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/api/**").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/**").authenticated()
