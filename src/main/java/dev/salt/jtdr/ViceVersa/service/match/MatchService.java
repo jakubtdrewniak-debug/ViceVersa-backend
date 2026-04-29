@@ -1,10 +1,12 @@
 package dev.salt.jtdr.ViceVersa.service.match;
 
 import dev.salt.jtdr.ViceVersa.domain.MatchEntity;
+import dev.salt.jtdr.ViceVersa.domain.TeamEntity;
 import dev.salt.jtdr.ViceVersa.dto.match.MatchDto;
 import dev.salt.jtdr.ViceVersa.enums.EntryType;
 import dev.salt.jtdr.ViceVersa.enums.MatchStatus;
 import dev.salt.jtdr.ViceVersa.repository.match.MatchRepository;
+import dev.salt.jtdr.ViceVersa.repository.team.TeamRepository;
 import dev.salt.jtdr.ViceVersa.service.TournamentProgressionService;
 import dev.salt.jtdr.ViceVersa.service.helper.MatchMapper;
 import jakarta.transaction.Transactional;
@@ -22,6 +24,7 @@ public class MatchService {
     private final MatchRepository matchRepo;
     private final TournamentProgressionService progressionService;
     private final MatchMapper mapper;
+    private final TeamRepository teamRepository;
 
     public MatchDto getMatchById(String matchId) {
         return matchRepo.findMatch(matchId)
@@ -49,8 +52,19 @@ public class MatchService {
 
     @Transactional
     public MatchDto createExhibitionMatch(String requestId, EntryType type, String player1Id, String player2Id) {
-        if (!requestId.equals(player1Id) && !requestId.equals(player2Id)) {
-            throw new SecurityException("You can create an exhibition match only if you participate in it.");
+        if (type == EntryType.SOLO) {
+            if (!requestId.equals(player1Id) && !requestId.equals(player2Id)) {
+                throw new SecurityException("You can create an exhibition match only if you participate in it.");
+            }
+        } else if (type == EntryType.TEAM) {
+            TeamEntity team1 = teamRepository.findById(player1Id).orElseThrow();
+            TeamEntity team2 = teamRepository.findById(player2Id).orElseThrow();
+
+            boolean inTeam1 = team1.getMembers().stream().anyMatch(m -> m.getId().equals(requestId));
+            boolean inTeam2 = team1.getMembers().stream().anyMatch(m -> m.getId().equals(requestId));
+            if (!inTeam1 && !inTeam2) {
+                throw new SecurityException("You must be on the active roster of the team to start a match");
+            }
         }
         MatchEntity match = new MatchEntity();
         match.setEntryType(type);
