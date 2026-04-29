@@ -103,7 +103,7 @@ public class TeamController {
     public ResponseEntity<?> deleteTeam(@PathVariable String id, @AuthenticationPrincipal Jwt jwt) {
         try {
             String requestId = jwt.getSubject();
-            List<String> roles = jwt.getClaimAsStringList("roles");
+            List<String> roles = jwt.getClaimAsStringList("https://viceversa.dev/roles");
             boolean isAdmin = roles != null && roles.contains("admin");
 
             boolean deleted = teamService.deleteTeam(id, requestId, isAdmin);
