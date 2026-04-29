@@ -71,7 +71,7 @@ public class TournamentController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<Void> deleteTournament(@PathVariable String id) {
         boolean deleted = tournamentService.deleteTournament(id);
         return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();

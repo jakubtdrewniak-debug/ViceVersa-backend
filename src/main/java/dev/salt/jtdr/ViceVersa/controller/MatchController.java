@@ -93,7 +93,7 @@ public class MatchController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<Void> deleteMatch(@PathVariable String id) {
         boolean deleted = matchService.deleteMatch(id, true);
 
