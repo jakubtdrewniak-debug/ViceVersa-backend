@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -66,16 +67,18 @@ public class MatchController {
         }
     }
 
-    @PostMapping("/{id}/score")
+    @PutMapping("/{id}/score")
     public ResponseEntity<?> updateScore(
             @PathVariable String id,
             @RequestBody MatchScoreDto dto,
+            Authentication authentication,
             @AuthenticationPrincipal Jwt jwt
             ) {
         try {
             String requestId = jwt.getSubject();
-            List<String> roles = jwt.getClaimAsStringList("roles");
-            boolean isAdmin = roles != null && roles.contains("admin");
+
+            boolean isAdmin = authentication != null && authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("admin"));
             MatchDto updatedMatch = matchService.updateMatchScore(
                     id, requestId, dto.p1(), dto.p2(), isAdmin
             );
