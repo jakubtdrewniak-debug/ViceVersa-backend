@@ -42,28 +42,32 @@ public class UserService {
 
     @Transactional
     public UserDto syncUser(Jwt jwt) {
+        String id = jwt.getSubject();
 
         String auth0Id = jwt.getSubject();
 
-        Optional<UserEntity> existingUser = repo.findById(auth0Id);
+        UserEntity existingUser = repo.findById(auth0Id).orElseGet(() -> {
+            UserEntity newUser = new UserEntity();
+            newUser.setId(id);
+            return newUser;
+        });
 
-        if (existingUser.isPresent()) {
-            return mapToUserDto(existingUser.get());
+        String email = jwt.getClaimAsString("https://viceversa.dev/email");
+        String name = jwt.getClaimAsString("https://viceversa.dev/name");
+        String picture = jwt.getClaimAsString("https://viceversa.dev/picture");
+
+        existingUser.setEmail(email);
+
+        if (name != null && !name.isEmpty()) {
+            existingUser.setName(name);
+        } else if (existingUser.getName() == null || existingUser.getName().equals("New Player")) {
+            String fallback = (email != null && email.contains("@")) ? email.split("@")[0] : "NewPlayer";
+            existingUser.setName(fallback);
         }
 
-        String email = jwt.getClaimAsString("email");
-        String name = jwt.getClaimAsString("name");
-        String picture = jwt.getClaimAsString("picture");
+        existingUser.setAvatar(picture);
 
-        UserEntity newUser = new UserEntity();
-        newUser.setId(auth0Id);
-        newUser.setEmail(email);
-
-        newUser.setName(name != null ? name : "New Player");
-        newUser.setAvatar(picture);
-
-        UserEntity savedUser = repo.saveUser(newUser);
-
+        UserEntity savedUser = repo.saveUser(existingUser);
         return mapToUserDto(savedUser);
     }
 
