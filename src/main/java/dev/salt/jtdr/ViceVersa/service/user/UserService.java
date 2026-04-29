@@ -18,6 +18,15 @@ public class UserService {
 
     private final UserRepository repo;
 
+
+    public UserDto findUser(String id) {
+        UserEntity foundUser = repo.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("No user found"));
+
+        return mapToUserDto(foundUser);
+
+    }
+
     public List<UserDto> getAllUsers() {
         return repo.findAll().stream()
                 .map(this::mapToUserDto)
