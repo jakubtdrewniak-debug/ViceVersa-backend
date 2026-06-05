@@ -24,4 +24,4 @@ spring:
           audiences:
             - ${AUTH0_AUDIENCE:https://viceversa.dev}
 server:
-  port: ${PORT}
+  port: ${PORT:8080}
